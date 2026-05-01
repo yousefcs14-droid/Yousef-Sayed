@@ -1,0 +1,430 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════
+   TAILWIND v4 — CSS-FIRST CONFIGURATION
+   ═══════════════════════════════════════════ */
+
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — THEME VARIABLES
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Light Mode */
+  --background: #FAFAFA;
+  --surface: #FFFFFF;
+  --surface-hover: #F4F4F5;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-glow: rgba(79, 70, 229, 0.15);
+  --text-primary: #09090B;
+  --text-secondary: #52525B;
+  --text-muted: #A1A1AA;
+  --border: #E4E4E7;
+  --border-subtle: #F4F4F5;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+
+  /* Misc */
+  --noise-opacity: 0.02;
+  --gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+  --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark {
+  --background: #09090B;
+  --surface: #18181B;
+  --surface-hover: #27272A;
+  --primary: #6366F1;
+  --primary-hover: #818CF8;
+  --primary-glow: rgba(99, 102, 241, 0.2);
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  --border: #27272A;
+  --border-subtle: #1E1E22;
+
+  --glass-bg: rgba(24, 24, 27, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  --noise-opacity: 0.03;
+  --gradient-hero: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #F472B6 100%);
+}
+
+/* ═══════════════════════════════════════════
+   THEME INLINE — TAILWIND TOKENS
+   ═══════════════════════════════════════════ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-glow: var(--primary-glow);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+
+  --font-heading: "Syne", "Tajawal", sans-serif;
+  --font-body: "Inter", "Cairo", sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   GLOBAL BASE STYLES
+   ═══════════════════════════════════════════ */
+
+* {
+  cursor: auto !important;
+}
+
+@media (pointer: coarse) {
+  * {
+    cursor: auto !important;
+  }
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  transition: background-color 0.3s var(--transition-smooth), color 0.3s var(--transition-smooth);
+}
+
+/* RTL-specific font overrides */
+[dir="rtl"] body {
+  font-family: "Cairo", "Inter", sans-serif;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] .font-heading {
+  font-family: "Tajawal", "Syne", sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════ */
+
+h1, h2, h3, h4, h5, h6,
+.font-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ═══════════════════════════════════════════
+   GLASSMORPHISM UTILITIES
+   ═══════════════════════════════════════════ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-strong {
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 1.5rem;
+  transition: all 0.4s var(--transition-smooth);
+}
+
+.glass-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 0 40px var(--primary-glow);
+  border-color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════
+   NOISE TEXTURE OVERLAY
+   ═══════════════════════════════════════════ */
+
+.noise-overlay::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ═══════════════════════════════════════════
+   GRADIENT ORB ANIMATION
+   ═══════════════════════════════════════════ */
+
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -50px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(40px, 30px) scale(1.02); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float-orb 20s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--primary);
+  opacity: 0.15;
+  top: -10%;
+  right: -5%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: #8B5CF6;
+  opacity: 0.1;
+  bottom: 10%;
+  left: -10%;
+  animation-delay: -7s;
+}
+
+.orb-3 {
+  width: 300px;
+  height: 300px;
+  background: #EC4899;
+  opacity: 0.08;
+  top: 40%;
+  left: 50%;
+  animation-delay: -14s;
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOM SCROLLBAR
+   ═══════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════
+   SELECTION
+   ═══════════════════════════════════════════ */
+
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+/* ═══════════════════════════════════════════
+   SMOOTH PAGE TRANSITIONS
+   ═══════════════════════════════════════════ */
+
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.6s var(--transition-smooth);
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: all 0.4s var(--transition-smooth);
+}
+
+/* ═══════════════════════════════════════════
+   TEXT MASK / REVEAL ANIMATION
+   ═══════════════════════════════════════════ */
+
+.text-reveal-mask {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+/* ═══════════════════════════════════════════
+   PROJECT CARD VIDEO HOVER
+   ═══════════════════════════════════════════ */
+
+.project-card-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.project-card-media:hover video {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════
+   TIMELINE LINE ANIMATION
+   ═══════════════════════════════════════════ */
+
+.timeline-line {
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--primary), transparent);
+  transform-origin: top;
+}
+
+/* ═══════════════════════════════════════════
+   FLOATING BADGE ANIMATION
+   ═══════════════════════════════════════════ */
+
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.floating-badge {
+  animation: float-badge 3s ease-in-out infinite;
+}
+
+.floating-badge:nth-child(2n) {
+  animation-delay: -0.5s;
+}
+
+.floating-badge:nth-child(3n) {
+  animation-delay: -1s;
+}
+
+.floating-badge:nth-child(4n) {
+  animation-delay: -1.5s;
+}
+
+/* ═══════════════════════════════════════════
+   FOCUS STYLES
+   ═══════════════════════════════════════════ */
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* ═══════════════════════════════════════════
+   MAGNETIC BUTTON HOVER STATES
+   ═══════════════════════════════════════════ */
+
+.magnetic-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: var(--primary);
+  color: white;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 9999px;
+  border: none;
+  transition: all 0.3s var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 10px 40px var(--primary-glow), 0 0 60px var(--primary-glow);
+  transform: translateY(-2px);
+}
+
+/* Section spacing */
+.section-spacing {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+
+@media (max-width: 768px) {
+  .section-spacing {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+* { cursor: auto !important; }

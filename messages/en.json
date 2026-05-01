@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "title": "Youssef Sayed — Designer & Visual Storyteller",
+    "description": "Crafting visual stories through design, motion & video. Graphic Design, Video Editing, UI/UX Design, and Motion Graphics."
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "about": "About",
+    "experience": "Experience",
+    "contact": "Contact",
+    "menu": "Menu",
+    "close": "Close"
+  },
+  "hero": {
+    "greeting": "Hello, I'm",
+    "name": "Youssef Sayed",
+    "subtitle": "Crafting Visual Stories through Design, Motion & Video",
+    "cta": "View My Work",
+    "scrollHint": "Scroll to explore"
+  },
+  "projects": {
+    "title": "Selected Work",
+    "subtitle": "A curated collection of design, motion, and video projects",
+    "filterAll": "All",
+    "filterGraphic": "Graphic Design",
+    "filterVideo": "Video Editing",
+    "filterUiux": "UI/UX Design",
+    "filterMotion": "Motion Graphics",
+    "viewProject": "View Project",
+    "playReel": "Play Reel"
+  },
+  "projectDetail": {
+    "backToProjects": "Back to Projects",
+    "overview": "Overview",
+    "process": "Design Process",
+    "gallery": "Gallery",
+    "nextProject": "Next Project",
+    "prevProject": "Previous Project",
+    "category": "Category",
+    "date": "Date",
+    "tools": "Tools Used"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "The mind behind the visuals",
+    "bio": "I'm Youssef Sayed, a multidisciplinary designer and visual storyteller based in the creative world. I specialize in Graphic Design, Video Editing, UI/UX Design, and Motion Graphics. My work is driven by a passion for crafting compelling visual narratives that connect with audiences on an emotional level.\n\nWith years of experience across multiple creative disciplines, I bring a unique perspective to every project. Whether it's designing a brand identity, editing a cinematic video, crafting intuitive user interfaces, or creating mesmerizing motion graphics — I approach each challenge with curiosity, precision, and a commitment to excellence.",
+    "downloadCV": "Download CV"
+  },
+  "experience": {
+    "title": "Experience & Skills",
+    "subtitle": "My professional journey and toolkit",
+    "present": "Present",
+    "techStack": "Tech Stack & Tools"
+  },
+  "contact": {
+    "title": "Let's Work Together",
+    "subtitle": "Have a project in mind? Let's create something extraordinary.",
+    "name": "Your Name",
+    "email": "Your Email",
+    "service": "Service Type",
+    "servicePlaceholder": "Select a service",
+    "serviceGraphic": "Graphic Design",
+    "serviceVideo": "Video Editing",
+    "serviceUiux": "UI/UX Design",
+    "serviceMotion": "Motion Graphics",
+    "serviceOther": "Other",
+    "message": "Your Message",
+    "messagePlaceholder": "Tell me about your project...",
+    "send": "Send via WhatsApp",
+    "sending": "Opening WhatsApp...",
+    "successTitle": "Message Ready!",
+    "successMessage": "WhatsApp will open with your message pre-filled.",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email"
+  },
+  "footer": {
+    "copyright": "© {year} Youssef Sayed. All rights reserved.",
+    "backToTop": "Back to top",
+    "madeWith": "Crafted with passion"
+  },
+  "cursor": {
+    "view": "View",
+    "play": "Play",
+    "drag": "Drag"
+  },
+  "language": {
+    "switchTo": "العربية",
+    "current": "EN"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "toggle": "Toggle Theme"
+  }
+}
