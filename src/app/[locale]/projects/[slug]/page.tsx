@@ -1,99 +1,104 @@
-"use client";
-
 import React from "react";
-import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
-import MagneticButton from "@/components/animations/magnetic-button";
+import { getTranslations } from "next-intl/server";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import { client } from "../../../../../sanity/lib/client";
+import { projectBySlugQuery } from "../../../../../sanity/lib/queries";
+import urlBuilder from "@sanity/image-url";
 
-// Demo project detail — CMS will replace this
-const project = {
-  title: "LUXE Brand Identity",
-  category: "Graphic Design",
-  date: "2025",
-  description: "Complete brand identity system for a luxury fashion house. The project included logo design, typography system, color palette, stationery design, packaging, and brand guidelines.",
-  thumbnail: "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=1200&q=80",
-  gallery: [
-    "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=800&q=80",
-    "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=800&q=80",
-    "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80",
-  ],
-  tools: ["Photoshop", "Illustrator", "InDesign"],
-};
+const builder = urlBuilder(client);
+function urlFor(source: any) {
+  return builder.image(source);
+}
 
-export default function ProjectDetailPage() {
-  const t = useTranslations("projectDetail");
+export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string; locale: string }> }) {
+  const { slug, locale } = await params;
+  const t = await getTranslations("projectDetail");
+  
+  // 1. جلب البيانات (تأكد أن الـ Query في ملف queries.ts يحتوي على كلمة tools)
+  const project = await client.fetch(projectBySlugQuery, { slug });
+
+  if (!project) notFound();
+
+  const projectTitle = project.title || "Project Details";
+  const categoryName = project.category?.replace("-", " ") || "Design";
 
   return (
     <>
       <Navbar />
-      <main className="pt-32 pb-20">
+      <main className="min-h-screen bg-black text-white pt-24 pb-20 transition-colors duration-500">
         <div className="mx-auto max-w-6xl px-6">
-          {/* Back Link */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <Link href="/#projects" className="inline-flex items-center gap-2 text-text-secondary hover:text-primary transition-colors mb-8">
-              <ArrowLeft size={18} /> {t("backToProjects")}
+          
+          {/* Back to Projects */}
+          <div className="mb-8 animate-fade-in">
+            <Link href={`/${locale}/#projects`} className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm">
+              <ArrowLeft size={16} className={locale === "ar" ? "rotate-180" : ""} /> 
+              {t("backToProjects")}
             </Link>
-          </motion.div>
-
-          {/* Hero Image */}
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="relative w-full aspect-[21/9] rounded-3xl overflow-hidden mb-12">
-            <Image src={project.thumbnail} alt={project.title} fill className="object-cover" sizes="100vw" priority />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
-          </motion.div>
-
-          {/* Project Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="lg:col-span-2">
-              <h1 className="font-heading text-4xl md:text-6xl font-bold text-text-primary mb-4">{project.title}</h1>
-              <p className="text-text-secondary text-lg leading-relaxed">{project.description}</p>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.6 }} className="space-y-6">
-              <div>
-                <span className="text-text-muted text-xs uppercase tracking-widest">{t("category")}</span>
-                <p className="text-text-primary font-medium mt-1">{project.category}</p>
-              </div>
-              <div>
-                <span className="text-text-muted text-xs uppercase tracking-widest">{t("date")}</span>
-                <p className="text-text-primary font-medium mt-1">{project.date}</p>
-              </div>
-              <div>
-                <span className="text-text-muted text-xs uppercase tracking-widest">{t("tools")}</span>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {project.tools.map((tool) => (
-                    <span key={tool} className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary font-medium">{tool}</span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
           </div>
 
-          {/* Gallery */}
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.8 }} className="mt-20">
-            <h2 className="font-heading text-2xl font-bold text-text-primary mb-8">{t("gallery")}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {project.gallery.map((img, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6 }} className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-                  <Image src={img} alt={`${project.title} ${i + 1}`} fill className="object-cover hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" />
-                </motion.div>
-              ))}
+          {/* 2. Featured Image (Rounded like the image) */}
+          {project.thumbnail && (
+            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] rounded-[2rem] overflow-hidden mb-12 shadow-2xl animate-fade-in-up">
+              <Image 
+                src={urlFor(project.thumbnail).url()} 
+                alt={projectTitle} 
+                fill 
+                className="object-cover" 
+                priority 
+              />
             </div>
-          </motion.div>
+          )}
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center mt-20 pt-10 border-t border-border">
-            <MagneticButton as="a" href="#" className="text-text-secondary hover:text-primary transition-colors font-medium">
-              ← {t("prevProject")}
-            </MagneticButton>
-            <MagneticButton as="a" href="#" className="text-text-secondary hover:text-primary transition-colors font-medium">
-              {t("nextProject")} →
-            </MagneticButton>
+          {/* 3. Project Info */}
+          <div className="mb-16 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <span className="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-4 block">
+              {categoryName}
+            </span>
+            <h1 className="font-heading text-4xl md:text-6xl font-bold mb-8">
+              {projectTitle}
+            </h1>
+
+            {/* عرض البرامج (Tools) - الحل هنا */}
+            {project.tools && project.tools.length > 0 && (
+              <div className="flex flex-wrap gap-3 mb-8">
+                {project.tools.map((tool: string) => (
+                  <span key={tool} className="px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-medium uppercase tracking-wider">
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            {/* الوصف */}
+            <p className="text-zinc-400 text-lg leading-relaxed max-w-4xl whitespace-pre-wrap">
+              {locale === "ar" ? project.description_ar : project.description_en}
+            </p>
           </div>
+
+          {/* 4. Gallery Section (4 columns like the image) */}
+          {project.gallery && project.gallery.length > 0 && (
+            <div className="mt-20 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <h2 className="font-heading text-2xl font-bold mb-10 text-zinc-100">Gallery</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {project.gallery.map((img: any, i: number) => (
+                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden shadow-lg group">
+                    <Image 
+                      src={urlFor(img).url()} 
+                      alt={`${projectTitle} gallery ${i}`} 
+                      fill 
+                      className="object-cover hover:scale-110 transition-transform duration-700" 
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
       <Footer />

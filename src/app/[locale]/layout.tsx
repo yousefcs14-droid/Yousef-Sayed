@@ -63,7 +63,8 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${syne.variable} ${cairo.variable} ${tajawal.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background text-text-primary">
+      {/* ضفنا suppressHydrationWarning هنا كمان عشان نسكت React خالص */}
+      <body className="min-h-full flex flex-col bg-background text-text-primary" suppressHydrationWarning>
         <ThemeInjector colors={siteSettings} />
         <ThemeProvider
           attribute="class"

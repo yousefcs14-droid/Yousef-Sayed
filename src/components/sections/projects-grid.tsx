@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import TextReveal from "@/components/animations/text-reveal";
+import Link from "next/link"; 
 
 const categories = [
   { key: "filterAll", value: "all" },
@@ -14,17 +15,6 @@ const categories = [
   { key: "filterMotion", value: "motion-graphics" },
 ];
 
-// Bento grid layout classes for varied aspect ratios
-const bentoLayouts = [
-  "md:col-span-2 md:row-span-2",   // Large
-  "md:col-span-1 md:row-span-1",   // Small
-  "md:col-span-1 md:row-span-2",   // Tall
-  "md:col-span-1 md:row-span-1",   // Small
-  "md:col-span-2 md:row-span-1",   // Wide
-  "md:col-span-1 md:row-span-1",   // Small
-];
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export default function ProjectsGrid({ data }: { data?: any }) {
   const t = useTranslations("projects");
   const locale = useLocale();
@@ -35,7 +25,6 @@ export default function ProjectsGrid({ data }: { data?: any }) {
   const showFilters = data?.showFilters ?? true;
   const maxProjects = data?.maxProjects || 0;
 
-  // هنا خلينا الكود يسحب المشاريع الحقيقية من الداتا بتاعتك
   const realProjects = data?.projects || [];
 
   let filtered =
@@ -48,14 +37,11 @@ export default function ProjectsGrid({ data }: { data?: any }) {
   }
 
   return (
-    <section id="projects" className="section-spacing relative">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="projects" className="section-spacing relative bg-background transition-colors duration-300">
+      <div className="mx-auto max-w-[1400px] px-6">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <TextReveal
-            as="h2"
-            className="font-heading text-4xl md:text-6xl font-bold text-text-primary justify-center"
-          >
+          <TextReveal as="h2" className="font-heading text-4xl md:text-5xl font-bold text-text-primary justify-center">
             {heading}
           </TextReveal>
           <motion.p
@@ -63,7 +49,7 @@ export default function ProjectsGrid({ data }: { data?: any }) {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="text-text-secondary text-lg mt-4 max-w-lg mx-auto"
+            className="text-text-secondary text-base mt-4 max-w-lg mx-auto"
           >
             {subtitle}
           </motion.p>
@@ -71,15 +57,15 @@ export default function ProjectsGrid({ data }: { data?: any }) {
 
         {/* Filter Tabs */}
         {showFilters && (
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
             {categories.map((cat) => (
               <motion.button
                 key={cat.value}
                 onClick={() => setActiveFilter(cat.value)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
                   activeFilter === cat.value
-                    ? "bg-primary text-white shadow-lg shadow-primary/25"
-                    : "glass text-text-secondary hover:text-text-primary"
+                    ? "bg-primary border-primary text-white" 
+                    : "bg-transparent border-border text-text-secondary hover:text-text-primary hover:border-text-primary"
                 }`}
                 whileTap={{ scale: 0.95 }}
               >
@@ -89,65 +75,70 @@ export default function ProjectsGrid({ data }: { data?: any }) {
           </div>
         )}
 
-        {/* Bento Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[250px] md:auto-rows-[200px]"
+        {/* Uniform Grid Layout */}
+        <motion.div 
+          layout 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((project: any, i: number) => {
-              // بنحدد الداتا بناءً على اللغة (عربي أو إنجليزي)
               const projectTitle = locale === "ar" ? project.title_ar || project.title : project.title;
-              const projectDescription = locale === "ar" ? project.description_ar : project.description_en;
-              // بنجيب رابط الصورة الحقيقي من سانيتي
               const imageUrl = project.thumbnail?.asset?.url || project.thumbnail || "";
+              const projectSlug = project.slug?.current || project.slug || "";
+              const categoryName = project.category?.replace("-", " ") || "Project";
 
               return (
                 <motion.article
                   key={project._id || i}
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: i * 0.05,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className={`group relative rounded-2xl overflow-hidden project-card-media ${
-                    bentoLayouts[i % bentoLayouts.length]
-                  }`}
-                  data-cursor="view"
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="group relative flex flex-col rounded-2xl overflow-hidden bg-surface border border-border hover:border-primary transition-all duration-300 shadow-sm hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
                 >
-                  {/* Thumbnail */}
-                  {imageUrl && (
-                    <Image
-                      src={imageUrl}
-                      alt={projectTitle || "Project"}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                  )}
+                  {/* Top: Image Container */}
+                  <div className="relative w-full aspect-[4/3] overflow-hidden bg-muted">
+                    {imageUrl && (
+                      <Image
+                        src={imageUrl}
+                        alt={projectTitle || "Project"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    )}
+                    
+                    {/* Hover Overlay Background (Dark Gradient always looks better on images) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  {/* Content on Hover */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <span className="text-primary text-xs font-semibold uppercase tracking-widest mb-2">
-                      {project.category?.replace("-", " ") || "Project"}
-                    </span>
-                    <h3 className="text-white font-heading text-xl md:text-2xl font-bold">
-                      {projectTitle}
-                    </h3>
-                    <p className="text-white/70 text-sm mt-1 line-clamp-2">
-                      {projectDescription}
-                    </p>
+                    {/* Hover Content */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
+                      <span className="text-primary text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1.5">
+                        {categoryName}
+                      </span>
+                      <h3 className="text-white font-bold text-base md:text-lg leading-tight line-clamp-2">
+                        {projectTitle}
+                      </h3>
+                    </div>
                   </div>
 
-                  {/* Glassmorphism border on hover */}
-                  <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 rounded-2xl transition-all duration-500" />
+                  {/* Bottom: Fixed Title Bar (Responsive to Theme) */}
+                  <div className="px-5 py-4 w-full bg-surface dark:bg-[#111111] border-t border-border relative z-10">
+                    <h4 className="text-sm font-bold text-text-primary line-clamp-1">
+                      {projectTitle}
+                    </h4>
+                  </div>
+
+                  {/* Link Covering the entire card */}
+                  {projectSlug && (
+                    <Link 
+                      href={`/${locale}/projects/${projectSlug}`} 
+                      className="absolute inset-0 z-50 cursor-pointer"
+                    >
+                      <span className="sr-only">View {projectTitle}</span>
+                    </Link>
+                  )}
                 </motion.article>
               );
             })}

@@ -1,22 +1,38 @@
 import { defineQuery } from "next-sanity";
 
 /* ═══════════════════════════════════════════
-   HOMEPAGE PAGE BUILDER
-   ═══════════════════════════════════════════ */
+    HOMEPAGE PAGE BUILDER
+    ═══════════════════════════════════════════ */
 
 export const homepageQuery = defineQuery(`
   *[_type == "homepage"][0] {
     pageBuilder[] {
-      _type,
-      _key,
-      ...
+      ...,
+      _type == "projectsGridSection" => {
+        "projects": *[_type == "project"] | order(order asc, date desc) {
+          _id,
+          title,
+          title_ar,
+          slug,
+          category,
+          description_en,
+          description_ar,
+          date,
+          tools, // تأكيد جلب البرامج في الصفحة الرئيسية
+          thumbnail {
+            asset->{
+              url
+            }
+          }
+        }
+      }
     }
   }
 `);
 
 /* ═══════════════════════════════════════════
-   SITE SETTINGS + THEME COLORS
-   ═══════════════════════════════════════════ */
+    SITE SETTINGS + THEME COLORS
+    ═══════════════════════════════════════════ */
 
 export const siteSettingsQuery = defineQuery(`
   *[_type == "siteSettings"][0] {
@@ -39,22 +55,27 @@ export const siteSettingsQuery = defineQuery(`
 `);
 
 /* ═══════════════════════════════════════════
-   PROJECTS
-   ═══════════════════════════════════════════ */
+    PROJECTS
+    ═══════════════════════════════════════════ */
 
 export const allProjectsQuery = defineQuery(`
   *[_type == "project"] | order(order asc, date desc) {
     _id,
     title,
+    title_ar,
     slug,
-    thumbnail,
+    thumbnail {
+      asset->{
+        url
+      }
+    },
     hoverVideo,
     category,
     description_en,
     description_ar,
     date,
     featured,
-    tools
+    tools // موجودة هنا تمام
   }
 `);
 
@@ -62,24 +83,33 @@ export const projectBySlugQuery = defineQuery(`
   *[_type == "project" && slug.current == $slug][0] {
     _id,
     title,
+    title_ar,
     slug,
-    thumbnail,
+    thumbnail {
+      asset->{
+        url
+      }
+    },
     hoverVideo,
     category,
     description_en,
     description_ar,
     date,
     videoEmbed,
-    gallery,
+    gallery[] {
+      asset->{
+        url
+      }
+    },
     caseStudy_en,
     caseStudy_ar,
-    tools
+    tools // تأكيد جلب البرامج في صفحة التفاصيل
   }
 `);
 
 /* ═══════════════════════════════════════════
-   ABOUT
-   ═══════════════════════════════════════════ */
+    ABOUT
+    ═══════════════════════════════════════════ */
 
 export const aboutQuery = defineQuery(`
   *[_type == "about"][0] {
@@ -93,8 +123,8 @@ export const aboutQuery = defineQuery(`
 `);
 
 /* ═══════════════════════════════════════════
-   EXPERIENCE
-   ═══════════════════════════════════════════ */
+    EXPERIENCE
+    ═══════════════════════════════════════════ */
 
 export const experiencesQuery = defineQuery(`
   *[_type == "experience"] | order(order asc) {
