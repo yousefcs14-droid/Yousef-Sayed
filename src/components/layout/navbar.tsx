@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ui/theme-toggle";
 import LanguageToggle from "@/components/ui/language-toggle";
-import MagneticButton from "@/components/animations/magnetic-button";
 
 const navLinks = [
   { key: "home", href: "#hero" },
@@ -21,9 +21,15 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  
+  const [hasLoaded, setHasLoaded] = useState(false); 
   const lastScrollY = React.useRef(0);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasLoaded(true);
+    }, 2800); 
+
     const handleScroll = () => {
       const currentY = window.scrollY;
       setIsScrolled(currentY > 50);
@@ -32,7 +38,10 @@ export default function Navbar() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timer);
+    };
   }, []);
 
   const scrollTo = (href: string) => {
@@ -47,30 +56,55 @@ export default function Navbar() {
     <>
       {/* Desktop Navigation */}
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: hidden ? -100 : 0 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ 
+          y: !hasLoaded ? -100 : hidden ? -100 : 0,
+          opacity: !hasLoaded ? 0 : 1 
+        }}
+        transition={{ 
+          duration: 0.6, 
+          ease: [0.16, 1, 0.3, 1],
+          type: "spring", stiffness: 100, damping: 20
+        }}
         className={`fixed top-0 inset-x-0 z-[100] transition-all duration-500 ${
-          isScrolled
-            ? "py-3"
-            : "py-5"
+          isScrolled ? "py-3" : "py-5"
         }`}
       >
         <nav className="mx-auto max-w-7xl px-6">
           <div
             className={`flex items-center justify-between rounded-2xl px-6 py-3 transition-all duration-500 ${
-              isScrolled ? "glass-strong" : ""
+              isScrolled ? "glass-strong border border-white/5 dark:border-white/10 shadow-2xl shadow-black/10" : ""
             }`}
           >
-            {/* Logo */}
-            <MagneticButton
-              as="a"
+            {/* Logo Image */}
+            <motion.a
               href="#hero"
-              className="font-heading text-xl font-bold text-text-primary tracking-tight"
-              onClick={() => scrollTo("#hero")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 overflow-hidden"
+              onClick={(e) => { 
+                e.preventDefault(); 
+                scrollTo("#hero"); 
+              }}
             >
-              YS<span className="text-primary">.</span>
-            </MagneticButton>
+              {/* اللوجو بتاع اللايت مود (بيختفي في الدارك) */}
+              <Image
+                src="/logo-light.png" 
+                alt="Logo Light"
+                fill
+                className="object-contain dark:hidden"
+                priority
+              />
+              
+              {/* اللوجو بتاع الدارك مود (مخفي، وبيظهر بس في الدارك) */}
+              <Image
+                src="/logo-dark.png" 
+                alt="Logo Dark"
+                fill
+                className="object-contain hidden dark:block"
+                priority
+              />
+            </motion.a>
 
             {/* Desktop Links */}
             <div className="hidden md:flex items-center gap-1">
@@ -78,9 +112,10 @@ export default function Navbar() {
                 <button
                   key={link.key}
                   onClick={() => scrollTo(link.href)}
-                  className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors rounded-xl hover:bg-surface-hover font-medium"
+                  className="relative group px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors rounded-xl hover:bg-surface-hover font-medium overflow-hidden"
                 >
-                  {t(link.key)}
+                  <span className="relative z-10">{t(link.key)}</span>
+                  <span className="absolute bottom-1.5 left-1/2 w-0 h-[2px] bg-primary -translate-x-1/2 transition-all duration-300 group-hover:w-1/2 rounded-full opacity-0 group-hover:opacity-100" />
                 </button>
               ))}
             </div>
@@ -92,12 +127,22 @@ export default function Navbar() {
 
               {/* Mobile Menu Button */}
               <motion.button
-                className="md:hidden w-10 h-10 rounded-full glass flex items-center justify-center text-text-primary"
+                className="md:hidden w-10 h-10 rounded-full glass flex items-center justify-center text-text-primary border border-white/10"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 whileTap={{ scale: 0.9 }}
                 aria-label={isMenuOpen ? t("close") : t("menu")}
               >
-                {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+                <AnimatePresence mode="wait">
+                  {isMenuOpen ? (
+                    <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <X size={18} strokeWidth={2.5} />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <Menu size={18} strokeWidth={2.5} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.button>
             </div>
           </div>
@@ -108,29 +153,26 @@ export default function Navbar() {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99] bg-background/95 backdrop-blur-xl flex items-center justify-center"
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, backdropFilter: "blur(20px)" }}
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="fixed inset-0 z-[99] bg-background/90 flex items-center justify-center"
           >
-            <motion.nav
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center gap-6"
-            >
+            <motion.nav className="flex flex-col items-center gap-6">
               {navLinks.map((link, i) => (
-                <motion.button
-                  key={link.key}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.4 }}
-                  onClick={() => scrollTo(link.href)}
-                  className="text-3xl font-heading font-bold text-text-primary hover:text-primary transition-colors"
-                >
-                  {t(link.key)}
-                </motion.button>
+                <div key={link.key} className="overflow-hidden">
+                  <motion.button
+                    initial={{ opacity: 0, y: 50, rotateX: -20 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    exit={{ opacity: 0, y: 30, rotateX: 20 }}
+                    transition={{ delay: i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    onClick={() => scrollTo(link.href)}
+                    className="text-4xl font-heading font-black text-text-primary hover:text-primary transition-colors tracking-tight"
+                  >
+                    {t(link.key)}
+                  </motion.button>
+                </div>
               ))}
             </motion.nav>
           </motion.div>

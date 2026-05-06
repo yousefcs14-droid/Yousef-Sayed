@@ -11,7 +11,8 @@ const containerVariants = {
   visible: {
     transition: {
       staggerChildren: 0.04,
-      delayChildren: 0.3,
+      // التعديل هنا: خلينا الاسم يستنى 2.8 ثانية عشان يظهر بعد الاسبلاش
+      delayChildren: 2.8, 
     },
   },
 };
@@ -117,7 +118,8 @@ export default function Hero({ data }: { data?: any }) {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          // التعديل: الترحيب هيظهر بعد 2.6 ثانية (وقت ما الاسبلاش بيبدأ يختفي)
+          transition={{ duration: 0.6, delay: 2.6 }}
           className="text-text-secondary text-lg md:text-xl mb-4 font-medium"
         >
           {greeting}
@@ -130,7 +132,8 @@ export default function Hero({ data }: { data?: any }) {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
+          // التعديل: الوصف هيظهر بعد 3.5 ثانية عشان يدي فرصة للاسم يظهر قبله
+          transition={{ duration: 0.8, delay: 3.5 }}
           className="text-text-secondary text-lg md:text-2xl max-w-2xl mx-auto mb-12 leading-relaxed"
         >
           {subtitle}
@@ -140,7 +143,8 @@ export default function Hero({ data }: { data?: any }) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.3 }}
+          // التعديل: الزرار بيظهر بعد 3.8 ثانية
+          transition={{ duration: 0.8, delay: 3.8 }}
         >
           <MagneticButton
             as="button"
@@ -158,7 +162,8 @@ export default function Hero({ data }: { data?: any }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 1 }}
+            // التعديل: السهم اللي تحت بيظهر آخر حاجة خالص بعد 4.5 ثانية
+            transition={{ delay: 4.5, duration: 1 }}
             className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
           >
             <span className="text-text-muted text-xs uppercase tracking-widest">

@@ -11,6 +11,8 @@ import { siteSettingsQuery } from "../../../sanity/lib/queries";
 // استيراد المكونات الأساسية
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+// الاستيراد الجديد بتاع الاسبلاش سكرين
+import SplashScreen from "@/components/layout/splash-screen"; 
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,17 +60,16 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const dir = isRtl(locale as Locale) ? "rtl" : "ltr";
   
-  // جلب إعدادات الموقع (اللي ضفنا فيها السوشيال ميديا والأيقونات)
   const siteSettings = await client.fetch(siteSettingsQuery);
 
   return (
     <html
       lang={locale}
       dir={dir}
-      className={`${inter.variable} ${syne.variable} ${cairo.variable} ${tajawal.variable} h-full antialiased`}
+      className={`${inter.variable} ${syne.variable} ${cairo.variable} ${tajawal.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background text-text-primary" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-background text-text-primary" suppressHydrationWarning>
         <ThemeInjector colors={siteSettings} />
         <ThemeProvider
           attribute="class"
@@ -77,15 +78,19 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            {/* 1. الناف بار يظهر فوق في كل الصفحات */}
+            
+            {/* ضفنا الاسبلاش سكرين هنا عشان يظهر أول حاجة قبل الموقع كله */}
+            <SplashScreen />
+
+            {/* 1. الناف بار ثابت فوق */}
             <Navbar />
 
-            {/* 2. محتوى الصفحة المتغير */}
-            <div className="flex-grow">
+            {/* 2. المحتوى: أضفنا له min-h-[120vh] عشان يزق الفوتر لتحت وقت التحميل */}
+            <main className="flex-grow flex flex-col min-h-[120vh]">
               {children}
-            </div>
+            </main>
 
-            {/* 3. الفوتر يظهر تحت وبنمرر له البيانات اللي جبناها من Sanity */}
+            {/* 3. الفوتر هيفضل دايما تحت بفضل flex-grow اللي فوقه */}
             <Footer socials={siteSettings?.socialLinks || []} />
             
           </NextIntlClientProvider>
