@@ -10,7 +10,8 @@ import { Send, CheckCircle } from "lucide-react";
 import TextReveal from "@/components/animations/text-reveal";
 import MagneticButton from "@/components/animations/magnetic-button";
 
-const WHATSAPP_NUMBER = "201234567890"; // Replace with actual number
+// التعديل: حطينا رقمك بالكود الدولي لمصر (20+) عشان الواتساب يشتغل صح
+const WHATSAPP_NUMBER = "201142545272"; 
 
 const schema = z.object({
   name: z.string().min(1, "required"),
@@ -30,6 +31,8 @@ export default function Contact({ data }: { data?: any }) {
   const heading = (locale === "ar" ? data?.heading_ar : data?.heading_en) || t("title");
   const subtitle = (locale === "ar" ? data?.subtitle_ar : data?.subtitle_en) || t("subtitle");
   const showServiceDropdown = data?.showServiceDropdown ?? true;
+  
+  // بياخد الرقم من السانتي لو موجود، لو مش موجود بياخد الرقم بتاعك اللي فوق
   const currentWhatsappNumber = data?.whatsappOverride || WHATSAPP_NUMBER;
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -37,6 +40,7 @@ export default function Contact({ data }: { data?: any }) {
   });
 
   const onSubmit = (formData: FormData) => {
+    // رسالة الواتساب متنسقة جاهزة
     const text = `*New Project Inquiry*%0A%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}${showServiceDropdown ? `%0A*Service:* ${formData.service}` : ''}%0A*Message:* ${formData.message}`;
     const url = `https://wa.me/${currentWhatsappNumber}?text=${text}`;
     window.open(url, "_blank");
@@ -52,7 +56,7 @@ export default function Contact({ data }: { data?: any }) {
     { value: "other", label: t("serviceOther") },
   ];
 
-  const inputBase = "w-full px-5 py-4 rounded-xl bg-surface border border-border text-text-primary placeholder:text-text-muted text-sm transition-all duration-300";
+  const inputBase = "w-full px-5 py-4 rounded-xl bg-surface border border-border text-text-primary placeholder:text-text-muted text-sm transition-all duration-300 hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none";
 
   return (
     <section id="contact" className="section-spacing relative">
@@ -81,7 +85,7 @@ export default function Contact({ data }: { data?: any }) {
 
             {showServiceDropdown && (
               <div>
-                <select {...register("service")} className={`${inputBase} appearance-none`} defaultValue="">
+                <select {...register("service")} className={`${inputBase} appearance-none cursor-pointer`} defaultValue="">
                   <option value="" disabled>{t("servicePlaceholder")}</option>
                   {services.map((s) => (
                     <option key={s.value} value={s.value}>{s.label}</option>
@@ -97,11 +101,11 @@ export default function Contact({ data }: { data?: any }) {
             </div>
 
             <div className="flex justify-center pt-4">
-              <MagneticButton as="button" type="submit" className="btn-primary text-base px-10 py-4" data-cursor="view" strength={0.3}>
+              <MagneticButton as="button" type="submit" className="btn-primary text-base px-10 py-4 flex items-center gap-2" data-cursor="view" strength={0.3}>
                 {sent ? (
-                  <><CheckCircle size={18} /> {t("successTitle")}</>
+                  <><CheckCircle size={18} /> <span>{t("successTitle") || "Sent!"}</span></>
                 ) : (
-                  <><Send size={18} /> {t("send")}</>
+                  <><Send size={18} /> <span>{t("send") || "Send Message"}</span></>
                 )}
               </MagneticButton>
             </div>

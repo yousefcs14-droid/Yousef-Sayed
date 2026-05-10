@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Inter, Syne, Cairo, Tajawal } from "next/font/google";
@@ -8,10 +9,8 @@ import { notFound } from "next/navigation";
 import { client } from "../../../sanity/lib/client";
 import { siteSettingsQuery } from "../../../sanity/lib/queries";
 
-// استيراد المكونات الأساسية
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
-// الاستيراد الجديد بتاع الاسبلاش سكرين
 import SplashScreen from "@/components/layout/splash-screen"; 
 
 const inter = Inter({
@@ -38,6 +37,34 @@ const tajawal = Tajawal({
   variable: "--font-tajawal",
   display: "swap",
 });
+
+// 🔴 دالة الـ Metadata الشاملة للـ SEO
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const siteSettings = await client.fetch(siteSettingsQuery);
+  
+  const title = siteSettings?.siteTitle || "Youssef Portfolio";
+  const description = locale === "ar" ? siteSettings?.metaDescription_ar : siteSettings?.metaDescription_en;
+  const keywords = locale === "ar" ? siteSettings?.keywords_ar : siteSettings?.keywords_en;
+  const ogImageUrl = siteSettings?.ogImage?.asset?.url;
+
+  return {
+    title: title,
+    description: description,
+    keywords: keywords,
+    openGraph: {
+      title: title,
+      description: description,
+      images: ogImageUrl ? [{ url: ogImageUrl }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title,
+      description: description,
+      images: ogImageUrl ? [ogImageUrl] : [],
+    }
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -79,19 +106,14 @@ export default async function LocaleLayout({
         >
           <NextIntlClientProvider messages={messages}>
             
-            {/* ضفنا الاسبلاش سكرين هنا عشان يظهر أول حاجة قبل الموقع كله */}
             <SplashScreen />
+            <Navbar navLinks={siteSettings?.navLinks || []} settings={siteSettings} />
 
-            {/* 1. الناف بار ثابت فوق */}
-            <Navbar />
-
-            {/* 2. المحتوى: أضفنا له min-h-[120vh] عشان يزق الفوتر لتحت وقت التحميل */}
             <main className="flex-grow flex flex-col min-h-[120vh]">
               {children}
             </main>
 
-            {/* 3. الفوتر هيفضل دايما تحت بفضل flex-grow اللي فوقه */}
-            <Footer socials={siteSettings?.socialLinks || []} />
+            <Footer socials={siteSettings?.socialLinks || []} settings={siteSettings} />
             
           </NextIntlClientProvider>
         </ThemeProvider>

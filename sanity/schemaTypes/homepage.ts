@@ -25,6 +25,7 @@ export const homepage = defineType({
         { type: "softwareMarqueeSection" },
         { type: "pricingSection" },
         { type: "faqSection" },
+        { type: "testimonialSection" },
         { type: "contactSection" },
       ],
     }),

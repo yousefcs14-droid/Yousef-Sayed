@@ -83,12 +83,21 @@
 
 * {
   cursor: auto !important;
+  box-sizing: border-box;
 }
 
 @media (pointer: coarse) {
   * {
     cursor: auto !important;
   }
+}
+
+/* حل مشكلة الهزة والموبايل في الـ RTL */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  position: relative;
+  width: 100%;
 }
 
 html {
@@ -101,7 +110,6 @@ body {
   background-color: var(--background);
   color: var(--text-primary);
   font-family: var(--font-body);
-  overflow-x: hidden;
   transition: background-color 0.3s var(--transition-smooth), color 0.3s var(--transition-smooth);
 }
 
@@ -184,57 +192,56 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* ═══════════════════════════════════════════
-   GRADIENT ORB ANIMATION
+   أنيميشن الخلفية الاحترافي (Ambient Aurora Glow)
+   تم استبدال الـ orbs القديمة بالأنيميشن السلس ده
    ═══════════════════════════════════════════ */
 
-@keyframes float-orb {
+@keyframes aurora-1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(30px, -50px) scale(1.05); }
-  50% { transform: translate(-20px, 20px) scale(0.95); }
-  75% { transform: translate(40px, 30px) scale(1.02); }
+  50% { transform: translate(5vw, 5vh) scale(1.1); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5vw, -5vh) scale(0.95); }
 }
 
-.orb {
-  position: absolute;
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -2;
   border-radius: 50%;
-  filter: blur(80px);
-  animation: float-orb 20s ease-in-out infinite;
+  filter: blur(100px);
+  pointer-events: none;
+  will-change: transform;
 }
 
-.orb-1 {
-  width: 500px;
-  height: 500px;
+body::before {
+  width: 45vw;
+  height: 45vw;
+  min-width: 350px;
+  min-height: 350px;
+  top: -10vh;
+  left: -10vw;
   background: var(--primary);
-  opacity: 0.15;
-  top: -10%;
-  right: -5%;
-  animation-delay: 0s;
+  opacity: 0.12;
+  animation: aurora-1 12s ease-in-out infinite alternate;
 }
 
-.orb-2 {
-  width: 400px;
-  height: 400px;
-  background: #8B5CF6;
-  opacity: 0.1;
-  bottom: 10%;
-  left: -10%;
-  animation-delay: -7s;
-}
-
-.orb-3 {
-  width: 300px;
-  height: 300px;
-  background: #EC4899;
+body::after {
+  width: 50vw;
+  height: 50vw;
+  min-width: 400px;
+  min-height: 400px;
+  bottom: -15vh;
+  right: -10vw;
+  background: #8B5CF6; 
   opacity: 0.08;
-  top: 40%;
-  left: 50%;
-  animation-delay: -14s;
+  animation: aurora-2 15s ease-in-out infinite alternate-reverse;
 }
+
+.dark body::before { opacity: 0.18; }
+.dark body::after { opacity: 0.12; background: #EC4899; }
 
 /* ═══════════════════════════════════════════
    CUSTOM SCROLLBAR
@@ -427,4 +434,3 @@ select:focus {
     padding-bottom: 4rem;
   }
 }
-* { cursor: auto !important; }

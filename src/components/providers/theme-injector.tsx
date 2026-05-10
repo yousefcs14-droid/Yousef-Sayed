@@ -104,5 +104,5 @@ export default function ThemeInjector({ colors }: { colors: ThemeColors | null }
     }
   }, [colors]);
 
-  return null; // This component injects CSS, renders nothing
+  return null; 
 }

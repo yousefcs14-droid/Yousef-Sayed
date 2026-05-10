@@ -9,14 +9,11 @@ import Contact from "@/components/sections/contact";
 import SoftwareMarquee from "@/components/sections/software-marquee";
 import Pricing from "@/components/sections/pricing";
 import FAQ from "@/components/sections/faq";
+import Testimonials from "@/components/sections/testimonials";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/**
- * Maps a Sanity section _type to its corresponding React component.
- * The `data` prop passes through all CMS fields for that section block.
- */
-const SECTION_MAP: Record<string, React.ComponentType<{ data?: any }>> = {
+const SECTION_MAP: Record<string, React.ComponentType<{ data?: any, testimonials?: any }>> = {
   heroSection: Hero,
   projectsGridSection: ProjectsGrid,
   aboutSection: About,
@@ -25,6 +22,7 @@ const SECTION_MAP: Record<string, React.ComponentType<{ data?: any }>> = {
   softwareMarqueeSection: SoftwareMarquee,
   pricingSection: Pricing,
   faqSection: FAQ,
+  testimonialSection: Testimonials,
 };
 
 interface SectionBlock {
@@ -37,10 +35,6 @@ interface PageBuilderProps {
   sections: SectionBlock[] | null;
 }
 
-/**
- * Default section order when no CMS data is available.
- * This ensures the site works perfectly even before Sanity is connected.
- */
 const DEFAULT_SECTIONS: SectionBlock[] = [
   { _type: "heroSection", _key: "fallback-hero" },
   { _type: "projectsGridSection", _key: "fallback-projects" },
@@ -48,6 +42,7 @@ const DEFAULT_SECTIONS: SectionBlock[] = [
   { _type: "experienceSection", _key: "fallback-experience" },
   { _type: "softwareMarqueeSection", _key: "fallback-marquee" },
   { _type: "pricingSection", _key: "fallback-pricing" },
+  { _type: "testimonialSection", _key: "fallback-testimonials" }, // التعديل: ضفنا قسم العملاء هنا
   { _type: "faqSection", _key: "fallback-faq" },
   { _type: "contactSection", _key: "fallback-contact" },
 ];
@@ -63,7 +58,7 @@ export default function PageBuilder({ sections }: PageBuilderProps) {
           console.warn(`[PageBuilder] Unknown section type: "${block._type}"`);
           return null;
         }
-        return <Component key={block._key} data={block} />;
+        return <Component key={block._key} data={block} testimonials={block.testimonials} />;
       })}
     </>
   );

@@ -5,119 +5,28 @@ export const project = defineType({
   title: "Project",
   type: "document",
   fields: [
+    defineField({ name: "title", title: "Project Title", type: "string", validation: (Rule) => Rule.required(), description: "اسم المشروع. مثال: تطبيق توصيل طعام" }),
+    defineField({ name: "slug", title: "Slug (URL)", type: "slug", options: { source: "title" }, validation: (Rule) => Rule.required(), description: "اضغط Generate عشان يعمل رابط للمشروع تلقائي." }),
+    defineField({ name: "category", title: "Category Value", type: "string", validation: (Rule) => Rule.required(), description: "تصنيف المشروع (لازم يطابق الكود اللي كتبته في السكاشن). مثال: ui-ux" }),
+    defineField({ name: "date", title: "Project Date", type: "date", description: "تاريخ عمل المشروع." }),
+    defineField({ name: "thumbnail", title: "Main Thumbnail (Cover)", type: "image", options: { hotspot: true }, validation: (Rule) => Rule.required(), description: "صورة الغلاف الرئيسية للمشروع." }),
+    
     defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-      validation: (Rule) => Rule.required(),
+      name: "hoverType", title: "Hover Preview Type", type: "string", description: "إيه اللي يحصل لما الماوس ييجي على صورة المشروع؟",
+      options: { list: [{ title: "None (صورة ثابتة)", value: "none" }, { title: "Video (تشغيل فيديو)", value: "video" }, { title: "Image Slider (تقليب صور)", value: "slider" }], layout: "radio" }, initialValue: "none"
     }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      options: { source: "title", maxLength: 96 },
-      validation: (Rule) => Rule.required(),
+    defineField({ name: "hoverVideo", title: "Hover Video (MP4)", type: "file", options: { accept: "video/mp4" }, hidden: ({ document }) => document?.hoverType !== "video", description: "ارفع فيديو قصير يشتغل تلقائي (يفضل خفيف)." }),
+    
+    defineField({ name: "description_en", title: "Short Description (EN)", type: "text", rows: 3, description: "وصف قصير عن المشروع بالإنجليزي." }),
+    defineField({ name: "description_ar", title: "Short Description (AR)", type: "text", rows: 3, description: "وصف قصير عن المشروع بالعربي." }),
+    
+    defineField({ name: "mediaGallery", title: "Media Gallery", type: "array", description: "معرض الصور والفيديوهات اللي جوه صفحة المشروع نفسها.",
+      of: [
+        { type: "image", title: "صورة", options: { hotspot: true } },
+        { type: "object", name: "videoElement", title: "رابط فيديو", fields: [{ name: "url", title: "YouTube / Vimeo URL", type: "url", description: "حط رابط الفيديو هنا." }], preview: { select: { title: "url" }, prepare({title}) { return { title: `🎬 Video: ${title}` } } } }
+      ]
     }),
-    defineField({
-      name: "thumbnail",
-      title: "Thumbnail Image",
-      type: "image",
-      options: { hotspot: true },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "hoverVideo",
-      title: "Hover Video Preview URL",
-      type: "url",
-      description: "URL to a short video that plays on hover (Vimeo/YouTube/direct MP4)",
-    }),
-    defineField({
-      name: "category",
-      title: "Category",
-      type: "string",
-      options: {
-        list: [
-          { title: "Graphic Design", value: "graphic-design" },
-          { title: "Video Editing", value: "video-editing" },
-          { title: "UI/UX Design", value: "ui-ux" },
-          { title: "Motion Graphics", value: "motion-graphics" },
-        ],
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "description_en",
-      title: "Description (English)",
-      type: "text",
-      rows: 3,
-    }),
-    defineField({
-      name: "description_ar",
-      title: "Description (Arabic)",
-      type: "text",
-      rows: 3,
-    }),
-    defineField({
-      name: "date",
-      title: "Date",
-      type: "date",
-    }),
-    defineField({
-      name: "featured",
-      title: "Featured",
-      type: "boolean",
-      initialValue: false,
-    }),
-    defineField({
-      name: "videoEmbed",
-      title: "Video Embed URL",
-      type: "url",
-      description: "Main project video (YouTube/Vimeo embed URL)",
-    }),
-    defineField({
-      name: "gallery",
-      title: "Image Gallery",
-      type: "array",
-      of: [{ type: "image", options: { hotspot: true } }],
-    }),
-    defineField({
-      name: "caseStudy_en",
-      title: "Case Study / Design Process (English)",
-      type: "array",
-      of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
-    }),
-    defineField({
-      name: "caseStudy_ar",
-      title: "Case Study / Design Process (Arabic)",
-      type: "array",
-      of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
-    }),
-    defineField({
-      name: "tools",
-      title: "Tools Used",
-      type: "array",
-      of: [{ type: "string" }],
-      options: { layout: "tags" },
-    }),
-    defineField({
-      name: "order",
-      title: "Display Order",
-      type: "number",
-    }),
+    defineField({ name: "featured", title: "Mark as Featured", type: "boolean", initialValue: false, description: "علم صح هنا لو عاوز المشروع ده يظهر كـ 'مميز' في الصفحة الرئيسية." }),
   ],
-  orderings: [
-    {
-      title: "Display Order",
-      name: "orderAsc",
-      by: [{ field: "order", direction: "asc" }],
-    },
-    {
-      title: "Date, Newest",
-      name: "dateDesc",
-      by: [{ field: "date", direction: "desc" }],
-    },
-  ],
-  preview: {
-    select: { title: "title", media: "thumbnail", subtitle: "category" },
-  },
+  preview: { select: { title: "title", media: "thumbnail", subtitle: "category" } },
 });
